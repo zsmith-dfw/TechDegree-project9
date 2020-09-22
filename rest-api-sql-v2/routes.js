@@ -24,7 +24,7 @@ const authenticateUser = (req, res, next) => {
   
     if (credentials) {
       // Look for a user whose `username` matches the credentials `name` property.
-      const user = User.find(u => u.emailAddress === credentials.name);
+      const user = User.findByPk(u => u.emailAddress === credentials.name);
   
       if (user) {
         const authenticated = bcryptjs
@@ -60,7 +60,7 @@ const authenticateUser = (req, res, next) => {
 
 // GET /api/users returns currently authenticated user STATUS 200
 
-router.get('/users', authenticateUser, (req, res) => {
+router.get('/api/users', authenticateUser, (req, res) => {
   const user = req.currentUser;
 
   res.json({
