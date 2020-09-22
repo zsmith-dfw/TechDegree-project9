@@ -60,7 +60,7 @@ const authenticateUser = (req, res, next) => {
 
 // GET /api/users returns currently authenticated user STATUS 200
 
-router.get('/api/users', authenticateUser, (req, res) => {
+router.get('/users', authenticateUser, (req, res) => {
   const user = req.currentUser;
 
   res.json({
@@ -72,7 +72,7 @@ router.get('/api/users', authenticateUser, (req, res) => {
 
 // POST /api/users Creates a user, sets location header to "/" and returns no content STATUS 201
 
-router.post('/api/users', [
+router.post('/users', [
   check('firstName')
     .exists({ checkNull: true, checkFalsy: true })
     .withMessage('Please provide a value for "first name"'),
