@@ -10,8 +10,8 @@ function asyncHandler(cb){
     return async (req,res, next) => {
         try {
             await cb(req, res, next);
-        } catch(err) {
-            next(err);
+        } catch(error) {
+            next(error);
         }
     }
 }
@@ -24,21 +24,21 @@ const authenticateUser = (req, res, next) => {
   
     if (credentials) {
       // Look for a user whose `username` matches the credentials `name` property.
-      const user = User.findByPk(u => u.emailAddress === credentials.name);
+      const user = User.findByPk(u => u.username === credentials.lastName);
   
       if (user) {
         const authenticated = bcryptjs
           .compareSync(credentials.pass, user.password);
         if (authenticated) {
-          console.log(`Authentication successful for username: ${user.emailAddress}`);
+          console.log(`Authentication successful for username: ${user.username}`);
   
           // Store the user on the Request object.
           req.currentUser = user;
         } else {
-          message = `Authentication failure for username: ${user.emailAddress}`;
+          message = `Authentication failure for username: ${user.username}`;
         }
       } else {
-        message = `User not found for username: ${credentials.name}`;
+        message = `User not found for username: ${credentials.lastName}`;
       }
     } else {
       message = 'Auth header not found';
@@ -60,15 +60,17 @@ const authenticateUser = (req, res, next) => {
 
 // GET /api/users returns currently authenticated user STATUS 200
 
-router.get('/users', authenticateUser, (req, res) => {
+router.get('/users', authenticateUser, asyncHandler(async (req, res) => {
   const user = req.currentUser;
 
-  res.json({
+  await res.json({
     firstName: user.firstName,
     lastName: user.lastName,
     emailAddress: user.emailAddress
   });
-});
+}));
+
+
 
 // POST /api/users Creates a user, sets location header to "/" and returns no content STATUS 201
 
@@ -86,15 +88,19 @@ router.post('/users', [
     .exists({ checkNull: true, checkFalsy: true })
     .withMessage('Please provide a value for "password"'),
 ],asyncHandler (async(req, res)=>{
-      const user = await User.create(req.body)
+    
       const errors = validationResult(req);
       if(!errors.isEmpty()) {
         const errorMessages = errors.array().map(error=>error.msg)
         return res.status(400).json({ errors: errorMessages });
       }
+      let user = req.body
       user.password = bcryptjs.hashSync(user.password);
+      user = await User.create(req.body)
       return res.status(201).json(user).end(); 
 }));
+
+
 
 
 
