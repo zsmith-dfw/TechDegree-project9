@@ -14,23 +14,21 @@ app.use(morgan("dev"));
 const enableGlobalErrorLogging =
   process.env.ENABLE_GLOBAL_ERROR_LOGGING === "true";
 
-// (async () => {
-//   try {
-//     await sequelize.authenticate();
-//     console.log("Connection to the database successful!");
-//     console.log("Synchronizing the models with the database...");
-//     await sequelize.sync();
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Connection to the database successful!");
+    await sequelize.sync();
 
-//     process.exit();
-//   } catch (error) {
-//     if (error.name === "SequelizeValidationError") {
-//       const errors = error.errors.map((err) => err.message);
-//       console.error("Validation errors: ", errors);
-//     } else {
-//       throw error;
-//     }
-//   }
-// })();
+  } catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      const errors = error.errors.map((err) => err.message);
+      console.error("Validation errors: ", errors);
+    } else {
+      throw error;
+    }
+  }
+})();
 
 app.get("/", (req, res) => {
   res.json({
