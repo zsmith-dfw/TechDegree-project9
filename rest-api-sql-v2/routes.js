@@ -123,7 +123,7 @@ router.get(
 router.get(
   "/courses/:id",
   asyncHandler(async (req, res) => {
-    const courses = await Course.findByPk(req.params.id);
+    const course = await Course.findByPk(req.params.id);
 
     if (course) {
       res.json(course);
@@ -152,7 +152,7 @@ router.post(
       const errorMessages = errors.array().map((error) => error.msg);
       return res.status(400).json({ errors: errorMessages });
     }
-    let course = await Course.create(req.body);
+    const course = await Course.create(req.body);
     res.redirect("/:id");
     return res.status(201).json(course).end();
   })
@@ -165,6 +165,7 @@ router.put(
   authenticateUser,
   asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
+    console.log(course)
     if (course) {
       await course.update(req.body);
       res.status(204).end();
