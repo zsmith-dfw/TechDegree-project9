@@ -113,7 +113,13 @@ router.post(
 router.get(
   "/courses",
   asyncHandler(async (req, res) => {
-    const courses = await Course.findAll();
+    const courses = await Course.findAll({
+      include: [
+        {
+          model: User,
+        },
+      ],
+    });
     res.json(courses);
   })
 );
@@ -153,7 +159,7 @@ router.post(
       return res.status(400).json({ errors: errorMessages });
     }
     const course = await Course.create(req.body);
-    res.redirect("/:id");
+    res.location("/courses/:id");
     return res.status(201).json(course).end();
   })
 );
