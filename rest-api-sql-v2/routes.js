@@ -161,7 +161,7 @@ router.post(
 // PUT /api/courses/:id Updates a course and returns no content STATUS 204
 
 router.put(
-  "/course/:id",
+  "/courses/:id",
   authenticateUser,
   asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
@@ -182,7 +182,7 @@ router.delete(
   authenticateUser,
   asyncHandler(async (req, res, next) => {
     const course = await Course.findByPk(req.params.id);
-    await Course.destroy(course);
+    await Course.destroy();
     res.status(204).end();
   })
 );
