@@ -89,7 +89,7 @@ router.post(
       .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Please provide a value for "password"'),
   ],
-  authenticateUser,
+
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -99,7 +99,7 @@ router.post(
     let user = req.body;
     user.password = bcryptjs.hashSync(user.password);
     user = await User.create(req.body);
-    res.redirect("/");
+    res.location("/");
     return res.status(201).json(user).end();
   })
 );
