@@ -21,11 +21,15 @@ module.exports = (sequelize) => {
       emailAddress: {
         type: Sequelize.STRING,
         allowNull: false,
+        validate: {
+          isEmail: true
+        }
       },
       password: {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      
     },
     { sequelize }
   );

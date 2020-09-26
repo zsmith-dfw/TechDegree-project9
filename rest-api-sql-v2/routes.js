@@ -66,11 +66,12 @@ router.get(
     await res.json({
       firstName: user.firstName,
       lastName: user.lastName,
-      emailAddress: user.emailAddress,
+      emailAddress: user.emailAddress
     });
   })
 );
 
+// , {attributes: {exclude: ['password']}}
 // POST /api/users Creates a user, sets location header to "/" and returns no content STATUS 201
 
 router.post(
@@ -116,8 +117,13 @@ router.get(
     const courses = await Course.findAll({
       include: [
         {
-          model: User,
+          model: User, 
+            attributes: {
+              exclude: ['password', 'createdAt', 'updatedAt']
+            },
+          
         },
+
       ],
     });
     res.json(courses);
@@ -129,7 +135,16 @@ router.get(
 router.get(
   "/courses/:id",
   asyncHandler(async (req, res) => {
-    const course = await Course.findByPk(req.params.id);
+    const course = await Course.findByPk(req.params.id,({
+      include: [
+        {
+          model: User,
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt']
+          },
+        },
+      ],
+    }));
 
     if (course) {
       res.json(course);
@@ -159,7 +174,7 @@ router.post(
       return res.status(400).json({ errors: errorMessages });
     }
     const course = await Course.create(req.body);
-    res.location("/courses/:id");
+    res.location(`/courses/${course}`);
     return res.status(201).end();
   })
 );
@@ -168,6 +183,14 @@ router.post(
 
 router.put(
   "/courses/:id",
+    [
+    check("title")
+      .exists({ checkNull: true, checkFalsy: true })
+      .withMessage('Please provide a value for "title"'),
+    check("description")
+      .exists({ checkNull: true, checkFalsy: true })
+      .withMessage('Please provide a value for "description"'),
+  ],
   authenticateUser,
   asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
