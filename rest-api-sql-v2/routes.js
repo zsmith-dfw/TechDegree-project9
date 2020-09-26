@@ -100,7 +100,7 @@ router.post(
     user.password = bcryptjs.hashSync(user.password);
     user = await User.create(req.body);
     res.location("/");
-    return res.status(201).json(user).end();
+    return res.status(201).end();
   })
 );
 
@@ -160,7 +160,7 @@ router.post(
     }
     const course = await Course.create(req.body);
     res.location("/courses/:id");
-    return res.status(201).json(course).end();
+    return res.status(201).end();
   })
 );
 
