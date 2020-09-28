@@ -123,8 +123,16 @@ router.get(
             },
           
         },
+        {
+          model: Course, 
+            attributes: {
+              exclude: ['createdAt', 'updatedAt']
+            },
+          
+        },
 
       ],
+      
     });
     res.json(courses);
   })
@@ -142,7 +150,17 @@ router.get(
           attributes: {
             exclude: ['password', 'createdAt', 'updatedAt']
           },
+          
         },
+        {
+          model: Course, 
+            attributes: {
+              exclude: ['createdAt', 'updatedAt']
+            },
+          
+        },
+
+        
       ],
     }));
 
