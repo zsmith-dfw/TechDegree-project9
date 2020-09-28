@@ -24,4 +24,4 @@ To test the Express server, browse to the URL [http://localhost:5000/](http://lo
 
 ## Use
 
-This API will be used in a future React application that will allow users to perform all CRUD operations themselves. 
+This API will be used in a future React application that will allow users to perform all CRUD operations themselves. Both courses and users can be created, read, updated, and deleted from the database. However, only the user assigned to that course can do this for security purposes. 

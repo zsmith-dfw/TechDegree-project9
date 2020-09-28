@@ -19,12 +19,12 @@ function asyncHandler(cb) {
 const authenticateUser = async (req, res, next) => {
   let message = null;
   const credentials = auth(req);
-  console.log(credentials);
+
   if (credentials) {
     const user = await User.findOne({
       where: { emailAddress: credentials.name },
     });
-    console.log(user);
+
     if (user) {
       const authenticated = bcryptjs.compareSync(
         credentials.pass,
@@ -66,12 +66,11 @@ router.get(
     await res.json({
       firstName: user.firstName,
       lastName: user.lastName,
-      emailAddress: user.emailAddress
+      emailAddress: user.emailAddress,
     });
   })
 );
 
-// , {attributes: {exclude: ['password']}}
 // POST /api/users Creates a user, sets location header to "/" and returns no content STATUS 201
 
 router.post(
@@ -115,24 +114,15 @@ router.get(
   "/courses",
   asyncHandler(async (req, res) => {
     const courses = await Course.findAll({
+      attributes: { exclude: ["createdAt", "updatedAt"] },
       include: [
         {
-          model: User, 
-            attributes: {
-              exclude: ['password', 'createdAt', 'updatedAt']
-            },
-          
+          model: User,
+          attributes: {
+            exclude: ["password", "createdAt", "updatedAt"],
+          },
         },
-        // {
-        //   model: Course, 
-        //     attributes: {
-        //       exclude: ['createdAt', 'updatedAt']
-        //     },
-          
-        // },
-
       ],
-      
     });
     res.json(courses);
   })
@@ -143,26 +133,17 @@ router.get(
 router.get(
   "/courses/:id",
   asyncHandler(async (req, res) => {
-    const course = await Course.findByPk(req.params.id,({
+    const course = await Course.findByPk(req.params.id, {
+      attributes: { exclude: ["createdAt", "updatedAt"] },
       include: [
         {
           model: User,
           attributes: {
-            exclude: ['password', 'createdAt', 'updatedAt']
+            exclude: ["password", "createdAt", "updatedAt"],
           },
-          
         },
-        // {
-        //   model: Course, 
-        //     attributes: {
-        //       exclude: ['createdAt', 'updatedAt']
-        //     },
-          
-        // },
-
-        
       ],
-    }));
+    });
 
     if (course) {
       res.json(course);
@@ -192,17 +173,16 @@ router.post(
       return res.status(400).json({ errors: errorMessages });
     }
     const course = await Course.create(req.body);
-    console.log(Course)
     res.location(`/courses/${course.id}`);
     return res.status(201).end();
   })
 );
 
-// PUT /api/courses/:id Updates a course and returns no content STATUS 204
+// PUT /api/courses/:id Updates a course and returns no content STATUS 204. Status 403 if there is an unauthorized user trying to update
 
 router.put(
   "/courses/:id",
-    [
+  [
     check("title")
       .exists({ checkNull: true, checkFalsy: true })
       .withMessage('Please provide a value for "title"'),
@@ -212,18 +192,22 @@ router.put(
   ],
   authenticateUser,
   asyncHandler(async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errorMessages = errors.array().map((error) => error.msg);
+      return res.status(400).json({ errors: errorMessages });
+    }
     const course = await Course.findByPk(req.params.id);
-    console.log(course)
-    if (course) {
+    if (course.userId === req.currentUser.id) {
       await course.update(req.body);
       res.status(204).end();
     } else {
-      res.status(404).json({ message: "Course Not Found" });
+      res.status(403).end();
     }
   })
 );
 
-// DELETE /api/courses/:id Deletes a course and returns no content STATUS 204
+// DELETE /api/courses/:id Deletes a course and returns no content STATUS 204. Status 403 if there is an unauthorized user trying to delete
 
 router.delete(
   "/courses/:id",
@@ -231,13 +215,12 @@ router.delete(
   asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
 
-    if(Course.userId === req.currentUser.userId){
+    if (course.userId === req.currentUser.id) {
       await course.destroy();
       res.status(204).end();
     } else {
-      res.status(403).end()
+      res.status(403).end();
     }
-
   })
 );
 
