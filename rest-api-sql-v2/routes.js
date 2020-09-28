@@ -123,13 +123,13 @@ router.get(
             },
           
         },
-        {
-          model: Course, 
-            attributes: {
-              exclude: ['createdAt', 'updatedAt']
-            },
+        // {
+        //   model: Course, 
+        //     attributes: {
+        //       exclude: ['createdAt', 'updatedAt']
+        //     },
           
-        },
+        // },
 
       ],
       
@@ -152,13 +152,13 @@ router.get(
           },
           
         },
-        {
-          model: Course, 
-            attributes: {
-              exclude: ['createdAt', 'updatedAt']
-            },
+        // {
+        //   model: Course, 
+        //     attributes: {
+        //       exclude: ['createdAt', 'updatedAt']
+        //     },
           
-        },
+        // },
 
         
       ],
@@ -192,7 +192,8 @@ router.post(
       return res.status(400).json({ errors: errorMessages });
     }
     const course = await Course.create(req.body);
-    res.location(`/courses/${course}`);
+    console.log(Course)
+    res.location(`/courses/${course.id}`);
     return res.status(201).end();
   })
 );
@@ -227,9 +228,8 @@ router.put(
 router.delete(
   "/courses/:id",
   authenticateUser,
-  asyncHandler(async (req, res, next) => {
+  asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
-    console.log(course.userId)
 
     if(Course.userId === req.currentUser.userId){
       await course.destroy();
