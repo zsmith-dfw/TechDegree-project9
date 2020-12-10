@@ -7,6 +7,9 @@
     "start": "nodemon ./app.js",
     "seed": "cross-env DB_ENABLE_LOGGING=true node './seed'"
   },
+  "engines": {
+    "node": "14.15.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
