@@ -12,12 +12,6 @@ const sequelize = new Sequelize('hqa7o25w8vhugv87', 'pjxzj8immypy804u', 'o576gyg
   dialect: 'mysql'
 })
 
-// start listening on our port
-const server = app.listen(app.get('port'), () => {
-  console.log(`Express server is listening on port ${server.address().port}`);
-  db.sequelize.sync();
-});
-
 const app = express();
 
 app.use(express.json());
@@ -74,6 +68,7 @@ app.set("port", process.env.PORT || 5000);
 
 const server = app.listen(app.get("port"), () => {
   console.log(`Express server is listening on port ${server.address().port}`);
+  db.sequelize.sync()
 });
 
 
