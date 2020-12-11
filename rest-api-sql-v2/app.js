@@ -1,9 +1,22 @@
 "use strict";
 
+const db = require('./models')
 const express = require("express");
 const morgan = require("morgan");
 const routes = require("./routes");
 const { sequelize } = require("./models");
+
+const sequelize = new Sequelize('hqa7o25w8vhugv87', 'pjxzj8immypy804u', 'o576gygibvf8ue91', {
+  host: "arfo8ynm6olw6vpn.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+  port: "3306",
+  dialect: 'mysql'
+})
+
+// start listening on our port
+const server = app.listen(app.get('port'), () => {
+  console.log(`Express server is listening on port ${server.address().port}`);
+  db.sequelize.sync();
+});
 
 const app = express();
 
