@@ -16,6 +16,8 @@ const sequelize = new Sequelize('hqa7o25w8vhugv87', 'pjxzj8immypy804u', 'o576gyg
 
 const app = express();
 
+app.use(cors())
+
 app.use(express.json());
 app.use(morgan("dev"));
 
