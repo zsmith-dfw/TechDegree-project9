@@ -4,6 +4,7 @@ const db = require('./models')
 const express = require("express");
 const morgan = require("morgan");
 const routes = require("./routes");
+const cors = require('cors')
 const Sequelize = require("sequelize");
 
 const sequelize = new Sequelize('hqa7o25w8vhugv87', 'pjxzj8immypy804u', 'o576gygibvf8ue91', {
